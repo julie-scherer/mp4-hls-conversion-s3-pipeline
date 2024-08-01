@@ -1,0 +1,12 @@
+version: '3'
+services:
+  convert-and-upload-videos:
+    build:
+      context: .
+      dockerfile: Dockerfile.scripts
+    volumes:
+      - ./logs:/usr/src/app/logs
+      - ./sql:/usr/src/app/sql
+      - ./s3:/usr/src/app/s3
+    env_file:
+      - .env

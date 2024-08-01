@@ -1,0 +1,28 @@
+# Use an official Python runtime as a parent image
+FROM python:3.10
+
+# Install ffmpeg and AWS CLI
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends ffmpeg awscli && \
+    rm -rf /var/lib/apt/lists/*
+
+# Configure AWS CLI with environment variables
+RUN aws configure set aws_access_key_id "${AWS_ACCESS_KEY_ID}" && \
+    aws configure set aws_secret_access_key "${AWS_SECRET_ACCESS_KEY}" && \
+    aws configure set default.region us-east-1
+
+# Set the working directory to /usr/src/app
+WORKDIR /usr/src/app
+
+# Copy the local directory contents into the container at /usr/src/app
+COPY ./ /usr/src/app/
+
+# Install packages in requirements.txt
+COPY ./requirements.txt  /usr/src/app/requirements.txt
+RUN pip install -r requirements.txt 
+
+# Add execute permission to the Python script
+RUN chmod +x /usr/src/app/convert_and_upload_videos.py
+
+# Run the script when the container launches
+CMD ["./convert_and_upload_videos.py"]
